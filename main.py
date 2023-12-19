@@ -76,3 +76,7 @@ async def detect_objects(file: UploadFile = File(...)):
         return JSONResponse(content={"hazardous_objects": hazardous_objects})
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
