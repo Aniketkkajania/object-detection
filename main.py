@@ -60,7 +60,7 @@ def get_objects(image_path):
 @app.post("/detect")
 async def detect_objects(file: UploadFile = File(...)):
     try:
-        image_path = f"{file.filename}"
+        image_path = f"uploads/{file.filename}"
         with open(image_path, "wb") as image_file:
             image_file.write(file.file.read())
 
