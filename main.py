@@ -1,6 +1,8 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi.responses import JSONResponse
 import cv2
 import numpy as np
+from io import BytesIO
 
 app = FastAPI()
 
@@ -10,9 +12,13 @@ classes = []
 with open("coco.names", "r") as f:
     classes = [line.strip() for line in f.readlines()]
 
-ef get_objects(image_bytes):
-    image_np = np.frombuffer(image_bytes, np.uint8)
-    img = cv2.imdecode(image_np, cv2.IMREAD_COLOR)
+def get_objects(image_content):
+    try:
+        nparr = np.frombuffer(image_content, np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error decoding image: {str(e)}")
+
     height, width, _ = img.shape
 
     blob = cv2.dnn.blobFromImage(img, 1/255.0, (416, 416), swapRB=True, crop=False)
@@ -61,12 +67,12 @@ ef get_objects(image_bytes):
 @app.post("/detect")
 async def detect_objects(file: UploadFile = File(...)):
     try:
-        image_bytes = await file.read()
-        hazardous_objects = get_objects(image_bytes)
+        image_content = await file.read()
+        hazardous_objects = get_objects(image_content)
 
         if any(hazardous_objects):
             print("Vehicle or a person approaching")
 
-        return {"hazardous_objects": hazardous_objects}
+        return JSONResponse(content={"hazardous_objects": hazardous_objects})
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
