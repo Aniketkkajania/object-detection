@@ -3,8 +3,18 @@ from fastapi.responses import JSONResponse
 import cv2
 import numpy as np
 from io import BytesIO
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# Allow all origins
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Load YOLOv3 model
 net = cv2.dnn.readNetFromDarknet("yolov3.cfg", "yolov3.weights")
