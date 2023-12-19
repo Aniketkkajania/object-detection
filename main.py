@@ -60,11 +60,8 @@ def get_objects(image_path):
 @app.post("/detect")
 async def detect_objects(file: UploadFile = File(...)):
     try:
-        image_path = f"uploads/{file.filename}"
-        with open(image_path, "wb") as image_file:
-            image_file.write(file.file.read())
-
-        hazardous_objects = get_objects(image_path)
+        image_bytes = await file.read()
+        hazardous_objects = get_objects(image_bytes)
 
         if any(hazardous_objects):
             print("Vehicle or a person approaching")
