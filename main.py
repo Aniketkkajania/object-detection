@@ -7,7 +7,7 @@ from io import BytesIO
 app = FastAPI()
 
 # Load YOLOv3 model
-net = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg")
+net = cv.dnn.readNetFromDarknet("yolov3.cfg", "yolov3.weights")
 classes = []
 with open("coco.names", "r") as f:
     classes = [line.strip() for line in f.readlines()]
