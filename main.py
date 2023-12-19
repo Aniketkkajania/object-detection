@@ -10,8 +10,9 @@ classes = []
 with open("coco.names", "r") as f:
     classes = [line.strip() for line in f.readlines()]
 
-def get_objects(image_path):
-    img = cv2.imread(image_path)
+ef get_objects(image_bytes):
+    image_np = np.frombuffer(image_bytes, np.uint8)
+    img = cv2.imdecode(image_np, cv2.IMREAD_COLOR)
     height, width, _ = img.shape
 
     blob = cv2.dnn.blobFromImage(img, 1/255.0, (416, 416), swapRB=True, crop=False)
